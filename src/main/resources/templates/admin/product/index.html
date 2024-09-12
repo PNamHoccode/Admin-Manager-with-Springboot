@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="admin/fragments/head::head"></head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+        <!-- Header -->
+        <div th:replace="admin/fragments/_header::header"></div>
+
+        <!-- aside -->
+        <div th:replace="admin/fragments/_aside::aside"></div>
+
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    Danh sách Sản Phẩm <small>it all starts here</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                    <li><a href="#">Examples</a></li>
+                    <li class="active">Danh sách Sản Phẩm</li>
+                </ol>
+            </section>
+            <!-- Main content -->
+            <section class="content">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Danh sách Sản Phẩm</h3>
+                        <div>
+                            <a class="btn btn-success" href="/admin/add-product">Thêm mới</a>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/admin/delete-products}" method="post">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color: #FFE4C4">
+                                    <th style="width: 10px; text-align: center;">
+                                        <input type="checkbox" id="select-all" />
+                                    </th>
+                                    <th style="text-align: center;">ID</th>
+                                    <th style="text-align: center;">Product Name</th>
+                                    <th style="text-align: center;">Price</th>
+                                    <th style="text-align: center;">Image</th>
+                                    <th style="text-align: center;">Category</th>
+                                    <th style="width: 50px; text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="product : ${listCategory}">
+                                    <td style="text-align: center;">
+                                        <input type="checkbox" name="ids" value="[[${product.id}]]" class="product-checkbox">
+                                    </td>
+                                    <td th:text="${product.id}"></td>
+                                    <td style="text-align: center;" th:text="${product.productName}"></td>
+                                    <td style="text-align: center;" th:text="${product.price}"></td>
+                                    <td style="text-align: center;">
+                                        <img th:src="@{'/uploads/' + ${product.image}}" alt="Product image" width="60" height="60">
+                                    </td>
+                                    <td style="text-align: center;" th:text="${product.category.categoryName}"></td>
+                                    <td style="text-align: center;">
+                                        <div style="display: flex; justify-content: center; gap: 5px;">
+                                            <a th:href="@{/admin/edit-product/{id}(id=${product.id})}" class="btn btn-warning">Sửa</a>
+                                            <a th:href="@{/admin/delete-product/{id}(id=${product.id})}" onclick="return confirm('Bạn có chắc muốn xóa?');" class="btn btn-danger">Xóa</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button id="delete-selected-btn" type="submit" class="btn btn-danger" style="display: none;" onclick="return confirm('Bạn có chắc muốn xóa các mục đã chọn?');">Xóa các mục đã chọn</button>
+                    </form>
+
+                    <div class="box-footer clearfix">
+                        <ul class="pagination pagination-sm no-margin pull-right">
+                            <li><a href="#">«</a></li>
+                            <li><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">»</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- footer -->
+        <div th:replace="admin/fragments/_footer::footer"></div>
+    </div>
+
+    <div th:replace="admin/fragments/script::script"></div>
+</body>
+<script>
+    const checkboxes = document.querySelectorAll('.product-checkbox');
+    const deleteButton = document.getElementById('delete-selected-btn');
+    const selectAllCheckbox = document.getElementById('select-all');
+
+    // Kiểm tra checkbox khi có thay đổi
+    function toggleDeleteButton() {
+        const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+        deleteButton.style.display = anyChecked ? 'inline-block' : 'none';
+    }
+
+    // Thêm sự kiện khi checkbox thay đổi
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', toggleDeleteButton);
+    });
+
+    // Checkbox chọn tất cả
+    selectAllCheckbox.addEventListener('change', function () {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        toggleDeleteButton();
+    });
+</script>
+</html>
